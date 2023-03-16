@@ -1,0 +1,69 @@
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Coding exercise</title>
+          <script src="https://d3js.org/d3.v4.min.js"></script>
+          <style>
+            .chart div {
+              font: 10px sans-serif;
+              background-color: steelblue;
+              text-align: right;
+              padding: 3px;
+              margin: 1px;
+              color: white;
+            }
+            .average div {
+              font: 10px sans-serif;
+              background-color: green;
+              text-align: right;
+              padding: 3px;
+              margin: 1px;
+              color: white;
+            }
+          </style>
+        </head>
+        <body>
+          <p>All Data Graph:</p>
+          <div class="chart"></div>
+          <p>Average graph:</p>
+          <div class="average"></div>
+      <script>
+
+        fetch('https://webbi.mhealth.fi/data/data.json')
+          .then(res => res.json())
+          .then(data => {
+            console.log("data", data)            
+            // Plotting the fetched data using d3 library.
+            d3.select(".chart").selectAll("div")
+              .data(data)
+              .enter()
+              .append("div")
+              .style("width", function(d) { return `${d}px`; })
+              .text(function(d) { return d; });
+      
+            let newData = [];
+            for (let i = 0; i < data.length; i += 7) {
+              let sum = 0;
+              for (let j = i; j < i + 7 && j < data.length; j++) {
+                sum += data[j];
+              }
+              newData.push(sum / 7);
+            }
+
+
+            // Plotting the average of each consecutive 7 values in the data using d3 library.
+            d3.select(".average").selectAll("div")
+              .data(newData)
+              .enter()
+              .append("div")
+              .style("width", function(d) { return `${d}px`; })
+              .text(function(d) { return d.toFixed(2); });
+          })
+          .catch(error => {
+            alert(`Something went wrong: ${error}`);
+          });
+      </script>
+        </body>
+      </html>
+
